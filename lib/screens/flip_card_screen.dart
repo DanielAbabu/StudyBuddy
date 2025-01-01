@@ -1,72 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:flip_card/flip_card.dart';
-import '../widgets/flip_card.dart';
+import 'flip_card_detail_screen.dart';
+import '../entity/entities.dart';
+import '../widgets/card_set.dart';
+import '../services/api_services.dart';
 
 class FlipCardScreen extends StatefulWidget {
+  final CourseEntity course;
 
-  final List<Map<String, String>> cards;
-
-  FlipCardScreen({required this.cards});
-
+  FlipCardScreen({required this.course});
 
   @override
   _FlipCardScreenState createState() => _FlipCardScreenState();
 }
 
-
-
 class _FlipCardScreenState extends State<FlipCardScreen> {
-  // List of question-answer pairs
-  // final List<Map<String, String>> cards = [
-  //   {'question': 'What is Flutter?', 'answer': 'Flutter is an open-source UI toolkit.'},
-  //   {'question': 'What is Dart?', 'answer': 'Dart is a programming language used with Flutter.'},
-  //   {'question': 'What is a Widget?', 'answer': 'A widget is a building block of the Flutter UI.'},
-  // ];
+  late CourseEntity course;
 
-
-
-  int currentIndex = 0;
-  void nextCard() {
-    setState(() {
-      currentIndex = (currentIndex + 1) %  widget.cards.length;
-    });
+  @override
+  void initState() {
+    super.initState();
+    course = widget.course;
   }
 
-  void previousCard() {
-    setState(() {
-      currentIndex = (currentIndex - 1 +  widget.cards.length) % widget.cards.length;
-    });
-  }
+  Future<void> generateCards() async {
+    final ApiService apiService = ApiService(); // Ensure ApiService is defined
+    try {
+      // Call the API to generate cards
+      await apiService.generateCard(course.id);
 
+      // Fetch the updated course data
+      final updatedCourse = await apiService.fetchCourse(course.id);
+
+      // Update the state with the new course data
+      setState(() {
+        course = updatedCourse;
+      });
+    } catch (error) {
+      // Handle any errors
+      print("Error generating cards: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to generate cards. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentCard =  widget.cards[currentIndex];
-
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Flip Card Widget
-        Flip_Card(
-          key: ValueKey(currentIndex), // Assign a unique key to each card
-          question: currentCard['question']!,
-          answer: currentCard['answer']!,
-        ),
-        SizedBox(height: 20),
-        // Navigation Arrows
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: Icon(Icons.arrow_left, size: 40),
-              onPressed: previousCard,
-            ),
-            IconButton(
-              icon: Icon(Icons.arrow_right, size: 40),
-              onPressed: nextCard,
-            ),
-          ],
-        ),
+      children:[ course.cards != null && course.cards!.isNotEmpty
+          ? ListView.builder(
+              itemCount: course.cards!.length,
+              itemBuilder: (context, index) {
+                final card = course.cards![index];
+
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FlipCardDetailScreen(
+                        cards: course.cards ?? [], // Handle nullable cards
+                      ),
+                    ),
+                  ),
+                  child: CardSet(id: index),
+                );
+              },
+            )
+          : Center(child: Text('No data available')),
+       FloatingActionButton(
+        onPressed: generateCards,
+        backgroundColor: Colors.green,
+        child: Icon(Icons.add, color: Colors.white),
+      ),
       ],
     );
   }

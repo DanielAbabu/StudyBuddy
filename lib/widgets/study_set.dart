@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../screens/study_detail_screen.dart';
 class StudySet extends StatelessWidget {
+  final int id;
   final String title;
   final String date;
 
   StudySet({
+    required this.id,
     required this.title,
     required this.date,
   });
@@ -31,7 +33,7 @@ class StudySet extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => StudyDetailScreen(id: title), // Pass the correct id
+              builder: (context) => StudyDetailScreen(id: id), // Pass the correct id
             ),
           );
         },

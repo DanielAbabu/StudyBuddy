@@ -46,6 +46,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     child: StudySet(
+                      id : course.id,
                       title: course.title, // Use course.title
                       date: course.date, // Use course.date
                     ),

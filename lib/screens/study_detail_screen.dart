@@ -5,7 +5,7 @@ import 'note_summary_screen.dart';
 import '../entity/entities.dart';
 import '../services/api_services.dart'; // Ensure ApiService is imported
 class StudyDetailScreen extends StatelessWidget {
-  final String id;
+  final int id;
 
   StudyDetailScreen({required this.id});
 
@@ -47,8 +47,9 @@ class StudyDetailScreen extends StatelessWidget {
               body: TabBarView(
                 children: [
                   NoteSummaryScreen(noteContent: course.noteContent),
-                  FlipCardScreen(cards: course.cards),
-                  QuizScreen(questions: course.questions),
+                  FlipCardScreen(course: course),
+                  // Text(" "),
+                  QuizScreen(course: course),
                 ],
               ),
             ),
