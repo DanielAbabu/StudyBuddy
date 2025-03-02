@@ -7,7 +7,8 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:async';
 import '../entity/entities.dart';
 
-const String baseApiUrl = "http://35.174.204.131";
+// const String baseApiUrl = "http://35.174.204.131";
+const String baseApiUrl = "http://44.202.1.112";
 
 class ApiService {
   Future<List<CourseCardEntity>> fetchAllCourses() async {

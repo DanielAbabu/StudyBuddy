@@ -89,7 +89,7 @@ class _UploadScreenState extends State<UploadScreen> {
       } catch (error) {
         // Handle errors
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error during upload: $error')),
+          SnackBar(content: Text('upload failed!')),
         );
       }
     } else {
@@ -147,6 +147,7 @@ class _UploadScreenState extends State<UploadScreen> {
                     labelText: 'Enter Course Title',
                     border: OutlineInputBorder(),
                     hintText: 'Course Title',
+                    hintStyle: TextStyle(color: Colors.grey),
                   ),
                 ),
                 SizedBox(height: 20),
